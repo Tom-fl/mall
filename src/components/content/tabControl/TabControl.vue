@@ -1,19 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2021-08-01 18:32:15
- * @LastEditTime: 2021-08-01 20:03:31
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 16:05:05
+ * @LastEditors: Tom
  * @Description: In User Settings Edit
  * @FilePath: \supermall\src\components\content\tabControl\TabControl.vue
 -->
 <template>
   <div class="tab_control">
-    <div
-      v-for="(item, index) in titles"
-      class="tab_control_item"
-      :class="{ active: index === currentIndex }"
-      @click="itemClick(index)"
-    >
+    <div v-for="(item, index) in titles" class="tab_control_item" :class="{ active: index === currentIndex }" @click="itemClick(index)">
       <span>{{ item }}</span>
     </div>
   </div>
@@ -21,7 +16,7 @@
 
 <script>
 export default {
-  name: "TabControl",
+  name: 'TabControl',
   props: {
     titles: {
       type: Array,
@@ -38,6 +33,7 @@ export default {
   methods: {
     itemClick(index) {
       this.currentIndex = index;
+      this.$emit('tabClick', index);
     },
   },
 };
