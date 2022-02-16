@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-07-31 14:25:52
- * @LastEditTime: 2021-09-05 17:06:38
+ * @LastEditTime: 2021-08-09 00:44:13
  * @LastEditors: Tom
  * @Description: In User Settings Edit
  * @FilePath: \supermall\src\views\home\Home.vue
@@ -11,33 +11,33 @@
     <nav-bar class="home_nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <scroll class="content">
-      <HomeSwiper :banners_son="banners" />
-      <recommend-view :recommends_son="recommends" />
-      <feature-view />
-      <tab-control @tabClick="tabClick" class="tab_control" ref="tabControl1" :titles="['流行', '新款', '精选']" />
-      <goods-list :goods="showGoods" />
-    </scroll>
+    <HomeSwiper :banners_son="banners" />
+    <HomeRecommendView :recommends_son="recommends" />
+    <HomeFeatureView />
+    <TabControl
+      class="tab_control"
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+    />
+    <goods-list :goods="showGodds"></goods-list>
   </div>
 </template>
 
 <script>
-import HomeSwiper from './childComps/HomeSwiper';
-import RecommendView from './childComps/RecommendView';
-import FeatureView from './childComps/FeatureView';
+import HomeSwiper from "./childComps/HomeSwiper";
+import HomeRecommendView from "./childComps/HomeRecommendView";
+import HomeFeatureView from "./childComps/HomeFeatureView";
 
-import NavBar from '@/components/common/navbar/NavBar';
-import TabControl from '@/components/content/tabControl/TabControl.vue';
-import Scroll from '@/components/common/scroll/Scroll.vue';
-import GoodsList from '@/components/content/goods/GoodsList';
+import NavBar from "@/components/common/navbar/NavBar";
+import TabControl from "@/components/content/tabControl/TabControl";
+import GoodsList from "@/components/content/goods/GoodsList";
 
-import { getHomeMultidata, getHomeGoods } from '@/network/home.js';
+import { getHomeMultidata, getHomeGoods } from "@/network/home.js";
 
 export default {
-  name: 'Home',
+  name: "Home",
   data() {
     return {
-      currentIndex: '',
       banners: [],
       recommends: [],
       goods: {
@@ -45,65 +45,59 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] },
       },
-      currentType: 'pop',
+      currentType: "pop",
     };
-  },
-  computed: {
-    showGoods() {
-      return this.goods[this.currentType].list;
-    },
   },
   components: {
     HomeSwiper,
-    RecommendView,
-    FeatureView,
-    GoodsList,
+    HomeRecommendView,
+    HomeFeatureView,
 
     NavBar,
     TabControl,
-    Scroll,
+    GoodsList,
   },
   created() {
     // 1.请求多个数据
     this.getHomeMultidata();
     // 2.请求商品数据
-    this.getHomeGoods('pop');
-    this.getHomeGoods('new');
-    this.getHomeGoods('sell');
+    this.getHomeGoods("pop");
+    this.getHomeGoods("new");
+    this.getHomeGoods("sell");
+  },
+  computed: {
+    showGodds() {
+      return this.goods[this.currentType].list;
+    },
   },
   methods: {
-    /**
-     * 事件监听相关的方法
-     */
+    // 事件监听相关的方法
     tabClick(index) {
       switch (index) {
         case 0:
-          this.currentType = 'pop';
+          this.currentType = "pop";
           break;
         case 1:
-          this.currentType = 'new';
+          this.currentType = "new";
           break;
         case 2:
-          this.currentType = 'sell';
+          this.currentType = "sell";
           break;
       }
-      this.$refs.tabControl1.currentIndex = index;
-      // this.$refs.tabControl2.currentIndex = index;
     },
-    /**
-     * 网络请求相关的方法
-     */
+    // 网络请求相关的
     getHomeMultidata() {
-      getHomeMultidata().then(res => {
+      getHomeMultidata().then((res) => {
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
       });
     },
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, page).then(res => {
+      getHomeGoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        console.log(this.goods[type].list);
       });
     },
   },
@@ -113,8 +107,6 @@ export default {
 <style scoped lang="less">
 #home {
   padding-top: 44px;
-  height: 100vh;
-  position: relative;
   .home_nav {
     background-color: var(--color-tint);
     color: #fff;
@@ -128,19 +120,7 @@ export default {
   .tab_control {
     position: sticky;
     top: 43px;
-  }
-  .content {
-    overflow: hidden;
-    position: absolute;
-    top: 44px;
-    bottom: 39px;
-    left: 0;
-    right: 0;
+    z-index: 9;
   }
 }
-// .content {
-//   height: calc(100% - 93px);
-//   overflow: hidden;
-//   margin-top: 44px;
-// }
 </style>
